@@ -494,17 +494,35 @@ body::before {
 
 .add-btn:active { transform: scale(0.92); }
 
+.category-pills-wrap {
+  position: relative;
+  padding: 8px 0 16px;
+}
+
+.category-pills-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 16px;
+  width: 30px;
+  background: linear-gradient(to right, transparent, var(--paper) 80%);
+  pointer-events: none;
+  z-index: 2;
+}
+
 .category-pills {
-  padding: 8px 20px 16px;
+  padding: 0 20px;
   display: flex;
   gap: 8px;
   overflow-x: auto;
+  scroll-padding: 20px;
 }
 
 .category-pills::-webkit-scrollbar { display: none; }
 
 .pill {
-  padding: 8px 14px;
+  padding: 9px 16px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
@@ -514,6 +532,7 @@ body::before {
   color: var(--ink-soft);
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .pill.active {
@@ -1065,6 +1084,16 @@ body::before {
   to { transform: translateY(0); }
 }
 
+@keyframes popIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  60% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.new-block {
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .modal-title {
   font-family: 'Fraunces', serif;
   font-size: 22px;
@@ -1346,13 +1375,16 @@ body::before {
         <button class="add-btn" onclick="openModal()">+</button>
       </div>
 
-      <div class="category-pills">
-        <div class="pill active">Todo</div>
-        <div class="pill">📚 Estudio</div>
-        <div class="pill">💼 Trabajo</div>
-        <div class="pill">🌱 Hábitos</div>
-        <div class="pill">🌅 Descanso</div>
-        <div class="pill">🎸 Hobby</div>
+      <div class="category-pills-wrap">
+        <div class="category-pills">
+          <div class="pill active">Todo</div>
+          <div class="pill">📚 Estudio</div>
+          <div class="pill">💼 Trabajo</div>
+          <div class="pill">🌱 Hábitos</div>
+          <div class="pill">🌅 Descanso</div>
+          <div class="pill">🎸 Hobby</div>
+          <div class="pill">👥 Social</div>
+        </div>
       </div>
 
       <div class="task-group">
@@ -1443,6 +1475,7 @@ body::before {
           <div class="screen-title">Mayo</div>
           <div class="screen-subtitle">Tu semana en bloques</div>
         </div>
+        <button class="add-btn" onclick="openModal()">+</button>
       </div>
 
       <div class="cal-week">
@@ -1455,7 +1488,7 @@ body::before {
         <div class="cal-day"><div class="dow">Dom</div><div class="dom">17</div></div>
       </div>
 
-      <div class="timeline">
+      <div class="timeline" id="timeline">
         <div class="time-block">
           <div class="time-label">7:00</div>
           <div class="time-event habito">
@@ -1705,7 +1738,7 @@ body::before {
 
         <div class="input-wrap">
           <label class="input-label">¿Cuándo?</label>
-          <input class="input-field" type="time" value="18:00">
+          <input class="input-field" type="time" value="18:00" id="task-time-input">
         </div>
 
         <div class="modal-actions">
@@ -1792,10 +1825,59 @@ function selectCat(el) {
   el.classList.add('selected');
 }
 
+function getCatInfo() {
+  const selected = document.querySelector('.cat-opt.selected');
+  if (!selected) return { key: 'descanso', emoji: '🌅', label: 'Descanso', pts: 25 };
+  const txt = selected.textContent.trim();
+  if (txt.includes('Estudio')) return { key: 'estudio', emoji: '📚', label: 'Estudio', pts: 30 };
+  if (txt.includes('Trabajo')) return { key: 'trabajo', emoji: '💼', label: 'Trabajo', pts: 25 };
+  if (txt.includes('Hábito')) return { key: 'habito', emoji: '🌱', label: 'Hábito', pts: 15 };
+  if (txt.includes('Descanso')) return { key: 'descanso', emoji: '🌅', label: 'Descanso', pts: 25 };
+  if (txt.includes('Hobby')) return { key: 'hobby', emoji: '🎸', label: 'Hobby', pts: 40 };
+  if (txt.includes('Social')) return { key: 'habito', emoji: '👥', label: 'Social', pts: 20 };
+  return { key: 'descanso', emoji: '🌅', label: 'Descanso', pts: 25 };
+}
+
 function addTask() {
   const name = document.getElementById('task-name-input').value || 'Nueva misión';
+  const time = document.getElementById('task-time-input').value || '18:00';
+  const cat = getCatInfo();
+
+  // Insertar en el timeline del calendario
+  const timeline = document.getElementById('timeline');
+  if (timeline) {
+    const block = document.createElement('div');
+    block.className = 'time-block new-block';
+    block.innerHTML = `
+      <div class="time-label">${time}</div>
+      <div class="time-event ${cat.key}">
+        <div class="event-title">${cat.emoji} ${name}</div>
+        <div class="event-duration">Recién agregado</div>
+        <div class="event-pts">+${cat.pts}</div>
+      </div>
+    `;
+    timeline.appendChild(block);
+  }
+
+  // Insertar también en la lista de pendientes
+  const taskGroup = document.querySelector('#screen-tasks .task-group');
+  if (taskGroup) {
+    const card = document.createElement('div');
+    card.className = 'task-card new-block';
+    card.onclick = function() { toggleTask(this); };
+    card.innerHTML = `
+      <div class="task-icon ${cat.key}">${cat.emoji}</div>
+      <div class="task-body">
+        <div class="task-name">${name}</div>
+        <div class="task-time">⏱ ${time} · nueva</div>
+      </div>
+      <div class="task-pts">+${cat.pts}</div>
+    `;
+    taskGroup.appendChild(card);
+  }
+
   closeModal();
-  showToast('✅ "' + name.slice(0, 20) + '" agregada');
+  showToast('✅ "' + name.slice(0, 20) + '" agregada · +' + cat.pts + ' pts');
   document.getElementById('task-name-input').value = '';
 }
 
