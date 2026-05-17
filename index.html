@@ -192,10 +192,12 @@ body::before {
   margin: 16px 20px;
   background: linear-gradient(160deg, #4d6b4a 0%, #2f4530 100%);
   border-radius: 28px;
-  padding: 24px;
+  padding: 22px 20px;
   position: relative;
   overflow: hidden;
   color: var(--cream);
+  min-height: 140px;
+  box-sizing: border-box;
 }
 
 .mascot-card::before {
@@ -218,29 +220,42 @@ body::before {
 }
 
 .mascot-svg {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   flex-shrink: 0;
+  background: rgba(245, 239, 230, 0.12);
+  border-radius: 20px;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.mascot-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .mascot-info .mascot-name {
   font-family: 'Fraunces', serif;
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   font-style: italic;
+  line-height: 1;
+  color: var(--cream);
+  display: block;
 }
 
 .mascot-info .mascot-level {
-  font-size: 12px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  opacity: 0.8;
-  margin-top: 4px;
+  letter-spacing: 1.2px;
+  opacity: 0.85;
+  margin-top: 6px;
+  display: block;
 }
 
 .xp-bar {
-  margin-top: 12px;
-  height: 6px;
+  margin-top: 10px;
+  height: 5px;
   background: rgba(245, 239, 230, 0.2);
   border-radius: 3px;
   overflow: hidden;
@@ -255,9 +270,10 @@ body::before {
 }
 
 .mascot-info .xp-text {
-  font-size: 11px;
+  font-size: 10px;
   opacity: 0.7;
-  margin-top: 6px;
+  margin-top: 4px;
+  display: block;
 }
 
 .energy-section {
@@ -747,12 +763,13 @@ body::before {
 
 /* === TIENDA === */
 .shop-header {
-  padding: 20px 24px;
+  padding: 24px 20px 20px;
+  margin: 16px 20px 16px;
   background: linear-gradient(135deg, #1a1410 0%, #3d342c 100%);
   color: var(--cream);
-  margin-bottom: 16px;
   position: relative;
   overflow: hidden;
+  border-radius: 24px;
 }
 
 .shop-header::before {
@@ -771,31 +788,35 @@ body::before {
   align-items: center;
   position: relative;
   z-index: 2;
+  gap: 10px;
 }
 
 .shop-title {
   font-family: 'Fraunces', serif;
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 900;
   font-style: italic;
+  line-height: 1;
 }
 
 .coin-badge {
   background: var(--gold);
   color: var(--ink);
-  padding: 8px 14px;
+  padding: 8px 12px;
   border-radius: 20px;
   font-weight: 800;
-  font-size: 15px;
+  font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .shop-subtitle {
-  font-size: 13px;
-  opacity: 0.7;
-  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.75;
+  margin-top: 10px;
   font-style: italic;
   position: relative;
   z-index: 2;
@@ -1199,9 +1220,14 @@ body::before {
   align-items: center;
   gap: 8px;
   white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
 }
 
-.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
 
 .legend {
   max-width: 380px;
@@ -1268,9 +1294,9 @@ body::before {
           </svg>
           <div class="mascot-info">
             <div class="mascot-name">Sage</div>
-            <div class="mascot-level">Nivel 4 · Brotando</div>
+            <div class="mascot-level">Nivel 4 · Brote</div>
             <div class="xp-bar"><div class="xp-fill"></div></div>
-            <div class="xp-text">340 / 500 XP para nivel 5</div>
+            <div class="xp-text">340 / 500 XP</div>
           </div>
         </div>
       </div>
